@@ -10,8 +10,12 @@ from langchain_experimental.tools.python.tool import PythonREPLTool
 
 from src.mytools.go_tool import go_nl_query_tool
 from src.mytools.aniseed import aniseed_tool
+from src.mytools.aniseed_2 import aniseed_tool_2
 from langchain.agents import initialize_agent
 from src.llm import LLM
+from src.mytools.select_tool import select_best_fitting_tool, MyTool
+
+
 llm = LLM.get_instance() 
 
 ###Agent prompt
@@ -29,9 +33,14 @@ Question: {input}
 {agent_scratchpad}"""
 
 tools = [
+    #     Tool(
+    #     name="Aniseedtool",
+    #     func=aniseed_tool,
+    #     description="Only use this tool when asked to search something on Aniseed",
+    # ),
         Tool(
         name="Aniseedtool",
-        func=aniseed_tool,
+        func=aniseed_tool_2,
         description="Only use this tool when asked to search something on Aniseed",
     ),
     Tool(
@@ -47,17 +56,33 @@ tools = [
 
     ]
 
+function_mapping = {
+    "Aniseedtool": aniseed_tool_2,
+    "mygenetool": go_nl_query_tool,
+    "pythonrepl": PythonREPLTool().run
+}
 
-prompt = ZeroShotAgent.create_prompt(
-    tools,
-    prefix=prefix,
-    suffix=suffix,
-    input_variables=["input", "chat_history", "agent_scratchpad"],
-)
+# prompt = ZeroShotAgent.create_prompt(
+#     tools,
+#     prefix=prefix,
+#     suffix=suffix,
+#     input_variables=["input", "chat_history", "agent_scratchpad"],
+# )
 
-memory = ConversationBufferMemory(memory_key='chat_history', return_messages=True)
+# memory = ConversationBufferMemory(memory_key='chat_history', return_messages=True)
 
-llm_chain = LLMChain(llm=llm, prompt=prompt)
+# llm_chain = LLMChain(llm=llm, prompt=prompt)
 
-aniseed_go_agent = initialize_agent(tools, llm, agent=AgentType.CONVERSATIONAL_REACT_DESCRIPTION, verbose=True, memory=memory)
-# aniseed_go_agent.run('What genes are expressed between stage 1 and 3 in ciona robusta?')
+# aniseed_go_agent = initialize_agent(tools, llm, agent=AgentType.CONVERSATIONAL_REACT_DESCRIPTION, verbose=True, memory=memory)
+# # aniseed_go_agent.run('What genes are expressed between stage 1 and 3 in ciona robusta?')
+
+
+
+def aniseed_go_agent(question: str):
+    print('In Aniseed agent...\nSelecting tool...')
+    selected_tool = select_best_fitting_tool(question, tools)
+    function_to_call = function_mapping.get(selected_tool.name)
+    print(f'Selected tool: {selected_tool.name}')
+    answer = function_to_call(question)
+    print(answer)
+    return answer

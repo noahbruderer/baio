@@ -63,6 +63,19 @@ vectordb_anissed = Chroma.from_documents(documents=anisseed_data_all_splits,
                                             embedding=embedding,
                                             persist_directory=persist_directory_aniseed)
 
+###
+# ##
+# ###
+# ####aniseed updated
+loader = TextLoader("/usr/src/app/baio/data/persistant_files/user_manuals/api_documentation/aniseed/aniseed_api_modified.txt")
+anisseed_data = loader.load()
+docs = text_splitter.split_documents(anisseed_data)
+embeddings = OpenAIEmbeddings()
+
+aniseed_faiss_db = FAISS.from_documents(docs, embeddings)
+aniseed_faiss_db.save_local("/usr/src/app/baio/data/persistant_files/vectorstores/aniseed_db_faiss_index")
+
+aniseed_faiss_db = FAISS.load_local("/usr/src/app/baio/data/persistant_files/vectorstores/aniseed_db_faiss_index", embeddings)
 
 
 ####

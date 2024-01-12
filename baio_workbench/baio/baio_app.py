@@ -27,7 +27,7 @@ def read_txt_file(path):
         return file.read()
         
 def app():
-    st.sidebar.markdown('''# PROVIDE AN OpenAI API KEY Xß:''')
+    st.sidebar.markdown('''# PROVIDE AN OpenAI API KEY:''')
 
     banner_image = "./baio/data/persistant_files/baio_logo.png"  
     st.image(banner_image, use_column_width=True)  

@@ -13,17 +13,18 @@ from langchain.vectorstores import FAISS
 from langchain.tools import tool
 from langchain_experimental.agents.agent_toolkits import create_python_agent
 from src.llm import LLM
-
 llm = LLM.get_instance()
-
-
+# ## devvv
+# # # LLM.initialize(openai_api_key='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', selected_model='gpt-4')
+# os.environ["OPENAI_API_KEY"] = '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'
 embedding = OpenAIEmbeddings()
+# from langchain.chat_models import ChatOpenAI
+# llm = ChatOpenAI(model_name='gpt-4', temperature=0, openai_api_key='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')
+# #persitant directory containing files for vectordb
+# # persist_directory = './baio/data/persistant_files/vectorstores/faissdb'
+# #loading Chroma vectordb
 
-#persitant directory containing files for vectordb
-# persist_directory = './baio/data/persistant_files/vectorstores/faissdb'
-#loading Chroma vectordb
-
-# vectordb_aniseed = FAISS.load_local("./baio/data/persistant_files/vectorstores/faissdb", embedding)
+# # vectordb_aniseed = FAISS.load_local("./baio/data/persistant_files/vectorstores/faissdb", embedding)
 
 
 
@@ -213,3 +214,273 @@ def aniseed_tool(question: str):
 #@ local testing:
 # question = 'find all genes expressed in ciona robusta between stage 1 and 10'
 # aniseed_tool(question)
+
+# from pydantic import BaseModel, Field
+# from typing import Optional
+# from langchain.prompts import ChatPromptTemplate
+# from langchain.chains.openai_functions import (
+#     create_structured_output_runnable,
+# )
+# import uuid
+# from urllib.parse import urlencode
+# import urllib.request
+# import urllib.parse
+# import json
+# from src.non_llm_tools.utilities import log_question_uuid_json
+# import os
+
+
+# # llm = LLM.get_instance()
+
+# # embedding = LLM.get_embedding()
+
+# ANISEED_db = FAISS.load_local("/usr/src/app/baio/data/persistant_files/vectorstores/aniseed", embedding)
+
+# class AniseedAPI:
+#     BASE_URL = "http://www.aniseed.fr/api"
+
+#     def all_genes(self, organism_id, search=None):
+#         """
+#         Returns a URL to list all genes for a given organism. 
+#         Optionally, a search term can be provided to filter the genes.
+#         """
+#         url = f"{self.BASE_URL}/all_genes?organism_id={organism_id}"
+#         if search:
+#             url += f"&search={search}"
+#         return url
+
+#     def all_genes_by_stage(self, organism_id, stage, search=None):
+#         """
+#         Returns a URL to list all genes for a given organism that are expressed at a specific stage.
+#         Optionally, a search term can be provided to filter the genes.
+#         """
+#         url = f"{self.BASE_URL}/all_genes_by_stage?organism_id={organism_id}&stage={stage}"
+#         if search:
+#             url += f"&search={search}"
+#         return url
+
+#     def all_genes_by_stage_range(self, organism_id, start_stage, end_stage, search=None):
+#         """
+#         Returns a URL to list all genes for a given organism that are expressed between two stages.
+#         Optionally, a search term can be provided to filter the genes.
+#         """
+#         url = f"{self.BASE_URL}/all_genes_by_stage_range?organism_id={organism_id}&start_stage={start_stage}&end_stage={end_stage}"
+#         if search:
+#             url += f"&search={search}"
+#         return url
+
+#     def all_genes_by_territory(self, organism_id, cell, search=None):
+#         """
+#         Returns a URL to list all genes for a given organism that are expressed in a specific territory.
+#         Optionally, a search term can be provided to filter the genes.
+#         """
+#         url = f"{self.BASE_URL}/all_genes_by_territory?organism_id={organism_id}&cell={cell}"
+#         if search:
+#             url += f"&search={search}"
+#         return url
+
+#     def all_territories_by_gene(self, organism_id, gene, search=None):
+#         """
+#         Returns a URL to list all territories where a specific gene is expressed for a given organism.
+#         Optionally, a search term can be provided to filter the territories.
+#         """
+#         url = f"{self.BASE_URL}/all_territories_by_gene?organism_id={organism_id}&gene={gene}"
+#         if search:
+#             url += f"&search={search}"
+#         return url
+
+#     def all_clones_by_gene(self, organism_id, gene, search=None):
+#         """
+#         Returns a URL to list all clones for a specific gene for a given organism.
+#         Optionally, a search term can be provided to filter the clones.
+#         """
+#         url = f"{self.BASE_URL}/clones?organism_id={organism_id}&gene={gene}"
+#         if search:
+#             url += f"&search={search}"
+#         return url
+
+#     def all_constructs(self, organism_id, search=None):
+#         """
+#         Returns a URL to list all constructs for a given organism. 
+#         Optionally, a search term can be provided to filter the constructs.
+#         """
+#         url = f"{self.BASE_URL}/constructs?organism_id={organism_id}"
+#         if search:
+#             url += f"&search={search}"
+#         return url
+
+#     def all_molecular_tools(self, search=None):
+#         """
+#         Returns a URL to list all molecular tools in the database. 
+#         Optionally, a search term can be provided to filter the tools.
+#         """
+#         url = f"{self.BASE_URL}/molecular_tools"
+#         if search:
+#             url += f"?search={search}"
+#         return url
+
+#     def all_publications(self, search=None):
+#         """
+#         Returns a URL to list all publications in the database. 
+#         Optionally, a search term can be provided to filter the publications.
+#         """
+#         url = f"{self.BASE_URL}/publications"
+#         if search:
+#             url += f"?search={search}"
+#         return url
+
+#     def all_regulatory_regions(self, organism_id, search=None):
+#         """
+#         Returns a URL to list all regulatory regions for a given organism. 
+#         Optionally, a search term can be provided to filter the regions.
+#         """
+#         url = f"{self.BASE_URL}/regulatory_regions?organism_id={organism_id}"
+#         if search:
+#             url += f"&search={search}"
+#         return url
+    
+    
+# class ANISEEDQueryRequest(BaseModel):
+#     url: str = Field(
+#         default="http://www.aniseed.fr/api/",
+#         description="ALWAYS USE this as DEFAULT end point. DO NOT CHANGE"
+#     )
+#     required_parameters: str = Field(
+#         default="the required parmeters",
+#         description="This is the first term after the url, fill it in based on the information that must be found"
+#     )
+#     function: str = Field(
+#         default="all_genes",
+#         description="This is the first term after the url, fill it in based on the information that must be found"
+#     )
+#     parameter1: Optional[str] = Field(
+#         default="",
+#         description="Dependant on the function you have to choose the appropriate parameter1 to answer the question"
+#     )
+#     parameter2: str = Field(
+#         default="",
+#         description="Dependant on the function you have to choose the appropriate parameter2 to answer the question"
+#     )
+#     full_url: Optional[str] = Field(
+#         default='TBF',
+#         description="Url used for the anisseed query"
+#     )
+#     question_uuid: Optional[str] = Field(
+#         default_factory=lambda: str(uuid.uuid4()),
+#         description="Unique identifier for the question."
+#     )
+    
+# def ANISEED_query_generator(question: str):
+#     """FUNCTION to write api call for any BLAST query, """
+#     BLAST_structured_output_prompt = ChatPromptTemplate.from_messages(
+#         [
+#             (
+#                 "system",
+#                 "You are a world class algorithm for extracting information in structured formats.",
+#             ),
+#             (
+#                 "human",
+#                 "Use the given format to extract information from the following input: {input}",
+#             ),
+#             ("human", "Tip: Make sure to answer in the correct format, make sure to respect the format of one function and two parameters and keep the base url"),
+#         ]
+#     )
+#     runnable = create_structured_output_runnable(ANISEEDQueryRequest, llm, BLAST_structured_output_prompt)
+#     #retrieve relevant info to question
+#     retrieved_docs = ANISEED_db.as_retriever().get_relevant_documents(question)
+#     #keep top 3 hits
+#     top_3_retrieved_docs = ''.join(doc.page_content for doc in retrieved_docs[:3])
+#     aniseed_call_obj = runnable.invoke({"input": f"{question} based on {top_3_retrieved_docs}"})
+#     data = {
+#         # 'url' : 'https://genome.ucsc.edu/cgi-bin/hgBlat?',
+#         'parameter1' : aniseed_call_obj.parameter1,
+#         'parameter2': aniseed_call_obj.parameter2,
+#     }
+#     # Make the API call
+#     query_string = urlencode(data)
+#     print(query_string)
+#     full_url = f"{aniseed_call_obj.url}?{query_string}"
+#     aniseed_call_obj.full_url = full_url
+#     aniseed_call_obj.question_uuid=str(uuid.uuid4())
+#     return aniseed_call_obj
+
+
+
+# # print(a)
+# def ANISEED_API_call_executer(request_data: ANISEEDQueryRequest):
+#     """Define
+#     """
+#     print('In API caller function\n--------------------')
+#     print(request_data)
+#     # Default values for optional fields
+#     default_headers = {"Content-Type": "application/json"}
+#     default_method = "GET"
+#     req = urllib.request.Request(request_data.full_url, headers=default_headers, method=default_method)
+#     try:
+#         with urllib.request.urlopen(req) as response:
+#             response_data = response.read()
+#             #some db efetch do not return data as json, but we try first to extract the json
+#             try:
+#                 return json.loads(response_data)
+#             except:
+#                 return response_data
+#     except urllib.error.HTTPError as e:
+#         print(f"HTTP Error: {e.code} - {e.reason}")
+#         try:
+#             with urllib.request.urlopen(req) as response:
+#                 response_data = response.read()
+#                 #some db efetch do not return data as json, but we try first to extract the json
+#                 try:
+#                     if request_data.retmode.lower() == "json":
+#                         return json.loads(response_data)
+#                 except:
+#                     return response_data
+#         except:
+#             print('error not fixed')
+#             return f"HTTP Error: {e.code} - {e.reason}"
+#     except urllib.error.URLError as e:
+#         print(f"URL Error: {e.reason}")
+#         return f"URL Error: {e.reason}"
+
+
+# def save_ANISEED_result(query_request, ANISEED_response, file_path):
+#     """Function saving BLAT results and returns file_name"""
+#     try:
+#         # Set file name and construct full file path
+#         file_name = f'ANISEED_results_{query_request.question_uuid}.json'
+#         full_file_path = os.path.join(file_path, file_name)
+#         # Open the file for writing
+#         with open(full_file_path, 'w') as file:
+#             # Write the static parts of the ANISEED_response
+#             for key in ANISEED_response:
+#                 json.dump({key: ANISEED_response[key]}, file)
+#                 file.write('\n')
+#             # for blat_entry in ANISEED_response['blat']:
+#             #     json.dump(blat_entry, file)
+#             #     file.write('\n')
+#         return file_name
+#     except:
+#         print('error not fixed')
+#         return f"HTTP Error"
+    
+# @tool
+# def aniseed_tool(question: str):
+#     """Takes in a question about any organisms on ANISEED and outputs a dataframe with requested information"""
+#     path_tempjson = "./baio/data/output/aniseed/temp/tempjson.json"
+#     path_save_csv = "./baio/data/output/aniseed/aniseed_out.csv"
+#     query = ANISEED_query_generator(question)
+#     return query
+
+# query = aniseed_tool('what genes does ciona robusta express between stage 1 and 3?')
+# print(query)
+# # #obtain Aniseed API call 
+# #     aniseed_api = AniseedAPI()
+# #     relevant_api_call_info = aniseed_api.query(question)
+# #     #execute Aniseed API call 
+# #     Utils.execute_code(relevant_api_call_info)
+# # # obtain code to convert JSON to csv
+# #     prompt = AniseedJSONExtractor(path_tempjson, path_save_csv).get_prompt()
+# #     print('python agent will be executed')
+# #     python_agent_executor.run(prompt)
+# #     final_anisseed_gene_df = pd.read_csv(path_save_csv)
+# #     return final_anisseed_gene_df

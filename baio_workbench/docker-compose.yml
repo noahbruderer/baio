@@ -1,8 +1,8 @@
 version: '3.8'
 services:
-  baioX:
-    image: baio:updated
+  baio:
+    build: .
     ports:
       - "8501:8501"
-    restart: unless-stopped
-    build: .
+    volumes:
+      - ./:/usr/src/app

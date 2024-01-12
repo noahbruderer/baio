@@ -1,0 +1,2 @@
+,name,biological_process_terms,cellular_component_terms,molecular_function_terms,biological_process_go_id,cellular_component_go_id,molecular_function_go_id,tax_id,entrez_id,ensembl_id,refseq_id,genomic_refseq_id,protein_refseq_id,rna_refseq_id
+0,foxf,None,None,None,None,None,None,7719,778611,ENSCING00000009387,"{'genomic': 'NC_020168.2', 'protein': 'NP_001071710.1', 'rna': 'NM_001078242.1', 'translation': {'protein': 'NP_001071710.1', 'rna': 'NM_001078242.1'}}",NC_020168.2,NP_001071710.1,NM_001078242.1

@@ -19,14 +19,17 @@ COPY requirements.txt .
 RUN pip3 install --no-cache-dir -r requirements.txt
 
 # Copy the 'baio' directory into the container
-COPY baio baio/
+# COPY baio baio/
 
 # Copy the shell script into the container and make sure it is executable
-COPY startup.sh .
-RUN chmod +x ./startup.sh
+# COPY startup.sh .
+# RUN chmod +x ./startup.sh
 
 # Make port 8501 available to the world outside this container
 EXPOSE 8501
 
 # Run the shell script when the container launches
-CMD ["./startup.sh"]
+# CMD ["./startup.sh"]
+
+# Run an infinite loop
+CMD tail -f /dev/null
